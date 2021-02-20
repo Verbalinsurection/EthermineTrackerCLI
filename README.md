@@ -1,4 +1,5 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli/badge)](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli)
+[![CodeFactor](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli/badge)](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli) 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Verbalinsurection_EthermineTrackerCLI&metric=alert_status)](https://sonarcloud.io/dashboard?id=Verbalinsurection_EthermineTrackerCLI)
 # Ethermine tracker CLI
 
 > :warning: **Work in progress** :warning: : Code work but need a lot of optimizations. **Feel free to participate !**
