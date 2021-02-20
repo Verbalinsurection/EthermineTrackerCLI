@@ -76,7 +76,7 @@ wallet = get_config('Wallet')
 etherscan_api_key = get_config('Etherscan_API')
 fiat_name = get_config('Fiat_Name')
 fiat_s = get_config('Fiat_symbol')
-theorical_hrate = get_config('Theorical_hrate')
+theorical_hrate = float(get_config('Theorical_hrate'))
 
 if not all(v is not None for v in \
            [wallet, etherscan_api_key, fiat_name, fiat_s, theorical_hrate]):
