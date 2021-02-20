@@ -1,3 +1,4 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli/badge)](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli)
 # Ethermine tracker CLI
 
 > :warning: **Work in progress** :warning: : Code work but need a lot of optimizations. **Feel free to participate !**
