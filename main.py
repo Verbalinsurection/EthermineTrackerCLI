@@ -92,6 +92,7 @@ ccalcT = CoinCalculators('ethereum')
 
 
 def update_data():
+    global updating
     updating = True
     ethm.update()
     coin.update()
@@ -329,10 +330,10 @@ def display_payout(y_start):
     y_start += 1
     display_ext_border(y_start)
     unpaid_text = 'Unpaid: ' + eth(ethm.unpaid_balance) + ' ' + CRYPTO_S
-    unpaid_text += ' ('+ str(to_cval(ethm.unpaid_balance)) + fiat_s + ')'
+    unpaid_text += ' ('+ str(to_cval(ethm.unpaid_balance)) + ' ' + fiat_s + ')'
     dis_value(y_start, int(TERM_COLS / 4), unpaid_text)
     tresh_text = 'Threshold: ' + eth(ethm.min_payout) + ' ' + CRYPTO_S
-    tresh_text += ' (' + str(to_cval(ethm.min_payout)) + fiat_s + ')'
+    tresh_text += ' (' + str(to_cval(ethm.min_payout)) + ' ' + fiat_s + ')'
     dis_value(y_start, int(TERM_COLS / 4 * 3), tresh_text)
 
     y_start += 1
@@ -456,7 +457,7 @@ def display_header(y_start):
     display_ext_border(y_start)
     wallet_text = str(ethw.balance) + ' ' + CRYPTO_S
     wallet_value = to_cval(ethw.balance)
-    wallet_text += ' (' + str(wallet_value) + fiat_s + ')'
+    wallet_text += ' (' + str(wallet_value) + ' ' + fiat_s + ')'
     dis_value(y_start, TERM_CENT, '', wallet_text)
     return y_start + 1
 
