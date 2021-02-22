@@ -265,8 +265,8 @@ def display_hash_array_line(y_start, title, ref, histo_id=0, col_force=None):
         color[4] = report_color(ref.avg_hrate_6[histo_id], reported_hrate)
         color[5] = report_color(ref.avg_hrate_24[histo_id], reported_hrate)
         color[6] = report_color(valid_shares, ref.last_histo.valid_shares)
-        color[7] = 4 if stale_shares > 0 else 0
-        color[8] = 1 if invalid_shares > 0 else 0
+        color[7] = 4 if stale_shares > 0 else 3
+        color[8] = 1 if invalid_shares > 0 else 3
     else:
         color = [col_force] * 9
 
