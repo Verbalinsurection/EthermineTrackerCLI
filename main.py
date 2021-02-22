@@ -290,9 +290,10 @@ def display_hash_array(y_start, workers=False):
     y_start = display_hash_array_headers(y_start)
     y_start = display_hash_array_line_sep(y_start)
 
-    y_start = display_hash_array_line(y_start, 'Actual', ethm)
-    y_start = display_hash_array_line(y_start, '30 min', ethm, 1, 5)
-    y_start = display_hash_array_line(y_start, '60 min', ethm, 2, 5)
+    if len(ethm.stats_histo) > 6:
+        y_start = display_hash_array_line(y_start, 'Actual', ethm)
+        y_start = display_hash_array_line(y_start, '30 min', ethm, 1, 5)
+        y_start = display_hash_array_line(y_start, '60 min', ethm, 2, 5)
 
     y_start = display_hash_array_line_sep(y_start, False, True)
     return y_start
@@ -304,9 +305,10 @@ def display_workers(y_start):
     y_start = display_hash_array_line_sep(y_start, False)
 
     for worker in ethm.workers:
-        y_start = display_hash_array_line(y_start, worker.name, worker)
-        y_start = display_hash_array_line(y_start, '30 min', worker, 1, 5)
-        y_start = display_hash_array_line(y_start, '60 min', worker, 2, 5)
+    	if len(worker.stats_histo) > 6:
+            y_start = display_hash_array_line(y_start, worker.name, worker)
+            y_start = display_hash_array_line(y_start, '30 min', worker, 1, 5)
+            y_start = display_hash_array_line(y_start, '60 min', worker, 2, 5)
 
     y_start = display_hash_array_line_sep(y_start, False, False, True)
     return y_start
@@ -314,9 +316,9 @@ def display_workers(y_start):
 
 def report_color_tresh(value, tresh1, tresh2):
     color = 0
-    if value > tresh1:
+    if value >= tresh1:
         color = 3
-    elif value > tresh2:
+    elif value >= tresh2:
         color = 4
     else:
         color = 1
