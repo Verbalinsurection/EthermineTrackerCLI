@@ -85,7 +85,7 @@ coin = Coin(fiat_name, 'ethereum')
 ethw = EtherWallet(etherscan_api_key, wallet)
 ccalc_reported = CoinCalculators('ethereum')
 ccalc_theorical = CoinCalculators('ethereum')
-ccalc_actual = CoinCalculators('ethereum')
+ccalc_avg24 = CoinCalculators('ethereum')
 
 
 def update_data():
@@ -95,9 +95,9 @@ def update_data():
     coin.update()
     ethw.update()
     ccalc_reported.update(ethm.reported_hrate)
-    ccalc_actual.update(ethm.current_hrate)
+    ccalc_avg24.update(ethm.avg_hrate_24[0])
     ccalc_theorical.update(theorical_hrate)
-    ethm.update_next_payout(ccalc_actual.eth_hour)
+    ethm.update_next_payout(ccalc_avg24.eth_hour)
     sleep(1)
     updating = False
 
