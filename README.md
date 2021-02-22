@@ -19,7 +19,7 @@ Informations :
   - Unpaid income
   - Treshold
   - Date of last payout
-  - *Calculated next payout (based on average gain since last payout)*
+  - *Calculated next payout (based on real hashrate) - From [Coincalculators](https://www.coincalculators.io)*
   - Progression for next payout
   - *Estimated income (based on average gain since last payout) and compared to :*
     - *Estimated income based on reported hashrate*

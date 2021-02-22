@@ -192,12 +192,14 @@ class Ethermine():
         self.gain_day = round(gain_min * 60 * 24, 5)
         self.gain_week = round(gain_min * 60 * 24 * 7, 5)
         self.gain_month = round(gain_min * 60 * 24 * 30, 5)
+        self.gain_progress = self.unpaid_balance / self.min_payout
+
+    def update_next_payout(self, actual_gain_hour):
         to_gain = self.min_payout - self.unpaid_balance
-        minutes_to_tresh = to_gain / gain_min
+        minutes_to_tresh = to_gain / (actual_gain_hour / 60)
         self.next_payout = \
             datetime.now().astimezone() + \
             timedelta(minutes=minutes_to_tresh)
-        self.gain_progress = self.unpaid_balance / self.min_payout
         self.next_payout_txt = self.next_payout.strftime('%Y-%m-%d %H:%M')
 
 

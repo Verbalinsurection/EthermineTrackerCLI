@@ -87,8 +87,9 @@ updating = False
 ethm = Ethermine(wallet)
 coin = Coin(fiat_name, 'ethereum')
 ethw = EtherWallet(etherscan_api_key, wallet)
-ccalc = CoinCalculators('ethereum')
-ccalcT = CoinCalculators('ethereum')
+ccalc_reported = CoinCalculators('ethereum')
+ccalc_theorical = CoinCalculators('ethereum')
+ccalc_actual = CoinCalculators('ethereum')
 
 
 def update_data():
@@ -97,8 +98,10 @@ def update_data():
     ethm.update()
     coin.update()
     ethw.update()
-    ccalc.update(ethm.reported_hrate)
-    ccalcT.update(theorical_hrate)
+    ccalc_reported.update(ethm.reported_hrate)
+    ccalc_actual.update(ethm.current_hrate)
+    ccalc_theorical.update(theorical_hrate)
+    ethm.update_next_payout(ccalc_actual.eth_hour)
     sleep(1)
     updating = False
 
@@ -379,13 +382,13 @@ def display_payout(y_start):
     stdscr.addstr(y_start, int(TERM_COLS / 4 * 3), '┼')
     y_start += 1
     hour_col = report_color_tresh(ethm.gain_hour,
-                                  ccalc.eth_hour, ccalcT.eth_hour)
+                                  ccalc_reported.eth_hour, ccalc_theorical.eth_hour)
     day_col = report_color_tresh(ethm.gain_day,
-                                 ccalc.eth_day, ccalcT.eth_day)
+                                 ccalc_reported.eth_day, ccalc_theorical.eth_day)
     week_col = report_color_tresh(ethm.gain_week,
-                                  ccalc.eth_week, ccalcT.eth_week)
+                                  ccalc_reported.eth_week, ccalc_theorical.eth_week)
     month_col = report_color_tresh(ethm.gain_month,
-                                   ccalc.eth_month, ccalcT.eth_month)
+                                   ccalc_reported.eth_month, ccalc_theorical.eth_month)
     display_ext_border(y_start)
     dis_value(y_start, int(TERM_COLS / 8), '',
               eth(ethm.gain_hour), hour_col, CRYPTO_S)
@@ -407,24 +410,24 @@ def display_payout(y_start):
               to_cval(ethm.gain_month), month_col, fiat_s)
     y_start += 1
     display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8),  eth(ccalc.eth_hour),
-              to_cval(ccalc.eth_hour), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 3), eth(ccalc.eth_day),
-              to_cval(ccalc.eth_day), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 5), eth(ccalc.eth_week),
-              to_cval(ccalc.eth_week), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 7), eth(ccalc.eth_month),
-              to_cval(ccalc.eth_month), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8),  eth(ccalc_reported.eth_hour),
+              to_cval(ccalc_reported.eth_hour), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8 * 3), eth(ccalc_reported.eth_day),
+              to_cval(ccalc_reported.eth_day), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8 * 5), eth(ccalc_reported.eth_week),
+              to_cval(ccalc_reported.eth_week), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8 * 7), eth(ccalc_reported.eth_month),
+              to_cval(ccalc_reported.eth_month), 5, '', 5, '/', 5)
     y_start += 1
     display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8),  eth(ccalcT.eth_hour),
-              to_cval(ccalcT.eth_hour), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 3), eth(ccalcT.eth_day),
-              to_cval(ccalcT.eth_day), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 5), eth(ccalcT.eth_week),
-              to_cval(ccalcT.eth_week), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 7), eth(ccalcT.eth_month),
-              to_cval(ccalcT.eth_month), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8),  eth(ccalc_theorical.eth_hour),
+              to_cval(ccalc_theorical.eth_hour), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8 * 3), eth(ccalc_theorical.eth_day),
+              to_cval(ccalc_theorical.eth_day), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8 * 5), eth(ccalc_theorical.eth_week),
+              to_cval(ccalc_theorical.eth_week), 5, '', 5, '/', 5)
+    dis_value(y_start, int(TERM_COLS / 8 * 7), eth(ccalc_theorical.eth_month),
+              to_cval(ccalc_theorical.eth_month), 5, '', 5, '/', 5)
     y_start += 1
     display_separator(y_start, SIMPLE_SEP_ROW)
     stdscr.addstr(y_start, int(TERM_COLS / 4), '┴')
