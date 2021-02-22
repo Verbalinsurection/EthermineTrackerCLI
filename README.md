@@ -51,6 +51,7 @@ Etherscan_API = XXXXXXXXXXXXXXXXXXXXXXX
 Fiat_Name = eur
 Fiat_symbol = €
 Theorical_hrate = 180.2
+Api_Update_Seconds = 60
 ```
 
 `Fiat_name` must be in coingecko list

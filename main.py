@@ -77,9 +77,11 @@ etherscan_api_key = get_config('Etherscan_API')
 fiat_name = get_config('Fiat_Name')
 fiat_s = get_config('Fiat_symbol')
 theorical_hrate = float(get_config('Theorical_hrate'))
+api_update_sec = int(get_config('Api_Update_Seconds'))
 
-if not all(v is not None for v in \
-           [wallet, etherscan_api_key, fiat_name, fiat_s, theorical_hrate]):
+if not all(v is not None for v in
+           [wallet, etherscan_api_key, fiat_name, fiat_s,
+            theorical_hrate, api_update_sec]):
     exit(1)
 
 
@@ -107,7 +109,7 @@ def update_data():
 
 
 def thread_updater():
-    schedule.every(30).seconds.do(update_data)
+    schedule.every(api_update_sec).seconds.do(update_data)
     while True:
         schedule.run_pending()
         sleep(1)
