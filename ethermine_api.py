@@ -113,7 +113,8 @@ class Ethermine():
                 for json_histo in data_json['statistics']:
                     stat_histo = EthermineH(json_histo)
                     self.stats_histo.append(stat_histo)
-                self.last_histo = self.stats_histo[len(self.stats_histo) - 1 - 3]
+                self.last_histo = \
+                    self.stats_histo[len(self.stats_histo) - 1 - 3]
                 self.max_index = len(self.stats_histo) - 1
                 self.calc_avg()
             except KeyError as e:
@@ -257,7 +258,8 @@ class Worker(Ethermine):
                 for json_histo in data_json:
                     stat_histo = EthermineH(json_histo)
                     self.stats_histo.append(stat_histo)
-                self.last_histo = self.stats_histo[len(self.stats_histo) - 1 - 3]
+                self.last_histo = \
+                    self.stats_histo[len(self.stats_histo) - 1 - 3]
                 self.max_index = len(self.stats_histo) - 1
                 self.calc_avg()
             except KeyError as e:

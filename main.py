@@ -51,6 +51,7 @@ CRYPTO_S = 'ETH'
 
 cfg_section = 'Tracker'
 
+
 def get_config(option):
     if not config.has_option(cfg_section, option):
         print('Option ' + option + ' missing')
@@ -60,7 +61,7 @@ def get_config(option):
         return None
 
     return config[cfg_section][option]
-        
+
 
 config = configparser.ConfigParser()
 if len(config.read('config.cfg')) < 1:
@@ -167,19 +168,19 @@ def split_three_col(y_start):
 
 def to_cval(crypto_val):
     cval_f = round(crypto_val * coin.price, 2)
-    return ('%.2f' %cval_f)
+    return ('%.2f' % cval_f)
 
 
 def eth(value):
-    return ('%.5f' %value)
+    return ('%.5f' % value)
 
 
 def fiat(value):
-    return ('%.2f' %value)
+    return ('%.2f' % value)
 
 
 def hrate(value):
-    return ('%.2f' %value)
+    return ('%.2f' % value)
 
 
 def hrateavg(value):
@@ -308,7 +309,7 @@ def display_workers(y_start):
     y_start = display_array_line_sep(y_start, HASH_CEP, False)
 
     for worker in ethm.workers:
-    	if len(worker.stats_histo) > 6:
+        if len(worker.stats_histo) > 6:
             y_start = display_hash_array_line(y_start, worker.name, worker)
             y_start = display_hash_array_line(y_start, '30 min', worker, 1, 5)
             y_start = display_hash_array_line(y_start, '60 min', worker, 2, 5)
@@ -325,7 +326,7 @@ def report_color_tresh(value, tresh1, tresh2):
         color = 4
     else:
         color = 1
-    
+
     return color
 
 
@@ -387,7 +388,8 @@ def display_payout(y_start):
     y_start += 1
     display_ext_border(y_start)
     unpaid_text = 'Unpaid: ' + eth(ethm.unpaid_balance) + ' ' + CRYPTO_S
-    unpaid_text += ' ('+ str(to_cval(ethm.unpaid_balance)) + ' ' + fiat_s + ')'
+    unpaid_text += ' (' + str(to_cval(ethm.unpaid_balance)) + \
+                   ' ' + fiat_s + ')'
     dis_value(y_start, int(TERM_COLS / 4), unpaid_text)
     tresh_text = 'Threshold: ' + eth(ethm.min_payout) + ' ' + CRYPTO_S
     tresh_text += ' (' + str(to_cval(ethm.min_payout)) + ' ' + fiat_s + ')'
@@ -406,7 +408,8 @@ def display_payout(y_start):
     y_start += 1
     display_ext_border(y_start)
     if ethm.gain_progress < 1:
-        num_block = int(round(ethm.gain_progress * 100 * (H_PROG_COLS / 100), 0))
+        num_block = \
+            int(round(ethm.gain_progress * 100 * (H_PROG_COLS / 100), 0))
         progress_text = str(round(ethm.gain_progress * 100, 1)).rjust(5, ' ')
     else:
         num_block = H_PROG_COLS
