@@ -4,6 +4,8 @@
 
 import requests
 
+from ethpay import EthPay
+
 
 class CoinCalculators():
     BASE_API = 'https://www.coincalculators.io/api'
@@ -11,14 +13,12 @@ class CoinCalculators():
 
     __crypto = None
 
-    eth_hour = 0.0
-    eth_day = 0.0
-    eth_week = 0.0
-    eth_month = 0.0
+    eth_pay = None
 
     def __init__(self, crypto):
         """Init of CoinCalculators class."""
         self.__crypto = crypto
+        self.eth_pay = EthPay()
 
     def __api_request(self, api_url):
         """Make CoinCalculators API call"""
@@ -45,7 +45,7 @@ class CoinCalculators():
         cust_url = cust_url.replace(':hrate:', str(hrate * 1000000))
         cc_json = self.__api_request(cust_url)
         if cc_json is not None:
-            self.eth_hour = round(cc_json['rewardsInHour'], 5)
-            self.eth_day = round(cc_json['rewardsInDay'], 5)
-            self.eth_week = round(cc_json['rewardsInWeek'], 5)
-            self.eth_month = round(cc_json['rewardsInMonth'], 5)
+            self.eth_pay.eth_hour = round(cc_json['rewardsInHour'], 5)
+            self.eth_pay.eth_day = round(cc_json['rewardsInDay'], 5)
+            self.eth_pay.eth_week = round(cc_json['rewardsInWeek'], 5)
+            self.eth_pay.eth_month = round(cc_json['rewardsInMonth'], 5)

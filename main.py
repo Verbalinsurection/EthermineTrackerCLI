@@ -89,7 +89,6 @@ coin = Coin(fiat_name, 'ethereum')
 ethw = EtherWallet(etherscan_api_key, wallet)
 ccalc_reported = CoinCalculators('ethereum')
 ccalc_theorical = CoinCalculators('ethereum')
-ccalc_avg6 = CoinCalculators('ethereum')
 
 
 def update_data():
@@ -99,9 +98,8 @@ def update_data():
     coin.update()
     ethw.update()
     ccalc_reported.update(ethm.reported_hrate)
-    ccalc_avg6.update(ethm.avg_hrate_6[0])
     ccalc_theorical.update(theorical_hrate)
-    ethm.update_next_payout(ccalc_avg6.eth_hour)
+    ethm.update_next_payout(ethm.eth_pay_stats.eth_hour)
     sleep(1)
     updating = False
 
@@ -424,11 +422,15 @@ def display_payout(y_start):
     y_start = display_payout_array_headers(y_start)
     y_start = display_array_line_sep(y_start, PAYOUT_CEP)
 
-    y_start = display_payout_array_line(y_start, 'Avg. 6h', ccalc_avg6, None,
-                                        ccalc_reported, ccalc_theorical)
-    y_start = display_payout_array_line(y_start, 'Reports', ccalc_reported, 5)
-    y_start = display_payout_array_line(y_start, 'F. last', ethm, 5)
-    y_start = display_payout_array_line(y_start, 'Theoric', ccalc_theorical, 5)
+    y_start = display_payout_array_line(
+        y_start, 'Estimated', ethm.eth_pay_stats, None,
+        ccalc_reported.eth_pay, ccalc_theorical.eth_pay)
+    y_start = display_payout_array_line(
+        y_start, 'Reported', ccalc_reported.eth_pay, 5)
+    y_start = display_payout_array_line(
+        y_start, 'Theorical', ccalc_theorical.eth_pay, 5)
+    y_start = display_payout_array_line(
+        y_start, 'From last', ethm.eth_pay_from_last, 5)
 
     y_start = display_array_line_sep(y_start, PAYOUT_CEP, False, True)
 

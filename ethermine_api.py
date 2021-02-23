@@ -6,11 +6,14 @@ from datetime import datetime, timedelta
 
 import requests
 
+from ethpay import EthPay
+
 
 class Ethermine():
     ETHM_API_BASE = 'https://api.ethermine.org'
     ETHM_API_POOLSTATS = ETHM_API_BASE + '/poolStats'
     ETHM_API_MINERDASH = ETHM_API_BASE + '/miner/:miner/dashboard'
+    ETHM_API_MINERSTAT = ETHM_API_BASE + '/miner/:miner/currentStats'
     ETHM_API_MINERPAYOUT = ETHM_API_BASE + '/miner/:miner/payouts'
     ETHM_API_WORKER = ETHM_API_BASE + '/miner/:miner/worker/:worker/history'
 
@@ -31,10 +34,8 @@ class Ethermine():
     min_payout = 0
     next_payout = None
     next_payout_txt = ''
-    eth_hour = 0.0
-    eth_day = 0.0
-    eth_week = 0.0
-    eth_month = 0.0
+    eth_pay_stats = None
+    eth_pay_from_last = None
     gain_progress = 0.0
 
     def __init__(self, eth_wallet):
@@ -46,12 +47,15 @@ class Ethermine():
         self.avg_hrate_1 = [0.0] * 3  # actual, 30m, 60m
         self.avg_hrate_6 = [0.0] * 3  # actual, 30m, 60m
         self.avg_hrate_24 = [0.0] * 3  # actual, 30m, 60m
+        self.eth_pay_stats = EthPay()
+        self.eth_pay_from_last = EthPay()
 
     def update(self):
         """Update Ethermine informations."""
         self.__update_pool()
         self.__update_miner_dash()
         self.__update_miner_payouts()
+        self.__update_stats_coin()
 
     def __hrate_mh(self, hashrate):
         return round(hashrate / 1000000, 2)
@@ -189,11 +193,21 @@ class Ethermine():
         time_delta = datetime.now().astimezone() - self.payouts[0].paid_on
         time_delta_m = time_delta.days * 1440 + (time_delta.seconds / 60)
         gain_min = self.unpaid_balance / (time_delta_m)
-        self.eth_hour = round(gain_min * 60, 5)
-        self.eth_day = round(gain_min * 60 * 24, 5)
-        self.eth_week = round(gain_min * 60 * 24 * 7, 5)
-        self.eth_month = round(gain_min * 60 * 24 * 30, 5)
+        self.eth_pay_from_last.eth_hour = round(gain_min * 60, 5)
+        self.eth_pay_from_last.eth_day = round(gain_min * 60 * 24, 5)
+        self.eth_pay_from_last.eth_week = round(gain_min * 60 * 24 * 7, 5)
+        self.eth_pay_from_last.eth_month = round(gain_min * 60 * 24 * 30, 5)
         self.gain_progress = self.unpaid_balance / self.min_payout
+
+    def __update_stats_coin(self):
+        cust_url = self.ETHM_API_MINERSTAT.replace(':miner', self.__wallet)
+        stats_json = self.api_request(cust_url)
+        if stats_json is not None:
+            coins_pmin = stats_json['data']['coinsPerMin']
+            self.eth_pay_stats.eth_hour = round(coins_pmin * 60, 5)
+            self.eth_pay_stats.eth_day = round(coins_pmin * 60 * 24, 5)
+            self.eth_pay_stats.eth_week = round(coins_pmin * 60 * 24 * 7, 5)
+            self.eth_pay_stats.eth_month = round(coins_pmin * 60 * 24 * 30, 5)
 
     def update_next_payout(self, actual_gain_hour):
         to_gain = self.min_payout - self.unpaid_balance
