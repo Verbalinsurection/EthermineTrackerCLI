@@ -19,9 +19,9 @@ Informations :
   - Unpaid income
   - Treshold
   - Date of last payout
-  - *Calculated next payout (based on 24h average real hashrate) - From [Coincalculators](https://www.coincalculators.io)*
+  - *Calculated next payout (based on 6h average real hashrate) - From [Coincalculators](https://www.coincalculators.io)*
   - Progression for next payout
-  - *Estimated income (based on average gain since last payout) and compared to :*
+  - *Estimated income (based on 6h average real hashrate) and compared to :*
     - *Estimated income based on reported hashrate*
     - *Estimated income based on graphic card theorical hashrate (you have to set this in config file). The goal is to compare the income to a no optimized CG raw hashrate from Coincalculators result*
   - Reported hashrate, actual, historical data over 3 range, shares

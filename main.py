@@ -85,7 +85,7 @@ coin = Coin(fiat_name, 'ethereum')
 ethw = EtherWallet(etherscan_api_key, wallet)
 ccalc_reported = CoinCalculators('ethereum')
 ccalc_theorical = CoinCalculators('ethereum')
-ccalc_avg24 = CoinCalculators('ethereum')
+ccalc_avg6 = CoinCalculators('ethereum')
 
 
 def update_data():
@@ -95,9 +95,9 @@ def update_data():
     coin.update()
     ethw.update()
     ccalc_reported.update(ethm.reported_hrate)
-    ccalc_avg24.update(ethm.avg_hrate_24[0])
+    ccalc_avg6.update(ethm.avg_hrate_6[0])
     ccalc_theorical.update(theorical_hrate)
-    ethm.update_next_payout(ccalc_avg24.eth_hour)
+    ethm.update_next_payout(ccalc_avg6.eth_hour)
     sleep(1)
     updating = False
 
@@ -377,33 +377,33 @@ def display_payout(y_start):
     stdscr.addstr(y_start, int(TERM_COLS / 2), '┼')
     stdscr.addstr(y_start, int(TERM_COLS / 4 * 3), '┼')
     y_start += 1
-    hour_col = report_color_tresh(ethm.gain_hour,
+    hour_col = report_color_tresh(ccalc_avg6.eth_hour,
                                   ccalc_reported.eth_hour, ccalc_theorical.eth_hour)
-    day_col = report_color_tresh(ethm.gain_day,
+    day_col = report_color_tresh(ccalc_avg6.eth_day,
                                  ccalc_reported.eth_day, ccalc_theorical.eth_day)
-    week_col = report_color_tresh(ethm.gain_week,
+    week_col = report_color_tresh(ccalc_avg6.eth_week,
                                   ccalc_reported.eth_week, ccalc_theorical.eth_week)
-    month_col = report_color_tresh(ethm.gain_month,
+    month_col = report_color_tresh(ccalc_avg6.eth_month,
                                    ccalc_reported.eth_month, ccalc_theorical.eth_month)
     display_ext_border(y_start)
     dis_value(y_start, int(TERM_COLS / 8), '',
-              eth(ethm.gain_hour), hour_col, CRYPTO_S)
+              eth(ccalc_avg6.eth_hour), hour_col, CRYPTO_S)
     dis_value(y_start, int(TERM_COLS / 8 * 3), '',
-              eth(ethm.gain_day), day_col, CRYPTO_S)
+              eth(ccalc_avg6.eth_day), day_col, CRYPTO_S)
     dis_value(y_start, int(TERM_COLS / 8 * 5), '',
-              eth(ethm.gain_week), week_col, CRYPTO_S)
+              eth(ccalc_avg6.eth_week), week_col, CRYPTO_S)
     dis_value(y_start, int(TERM_COLS / 8 * 7), '',
-              eth(ethm.gain_month), month_col, CRYPTO_S)
+              eth(ccalc_avg6.eth_month), month_col, CRYPTO_S)
     y_start += 1
     display_ext_border(y_start)
     dis_value(y_start, int(TERM_COLS / 8), '',
-              to_cval(ethm.gain_hour), hour_col, fiat_s)
+              to_cval(ccalc_avg6.eth_hour), hour_col, fiat_s)
     dis_value(y_start, int(TERM_COLS / 8 * 3), '',
-              to_cval(ethm.gain_day), day_col, fiat_s)
+              to_cval(ccalc_avg6.eth_day), day_col, fiat_s)
     dis_value(y_start, int(TERM_COLS / 8 * 5), '',
-              to_cval(ethm.gain_week), week_col, fiat_s)
+              to_cval(ccalc_avg6.eth_week), week_col, fiat_s)
     dis_value(y_start, int(TERM_COLS / 8 * 7), '',
-              to_cval(ethm.gain_month), month_col, fiat_s)
+              to_cval(ccalc_avg6.eth_month), month_col, fiat_s)
     y_start += 1
     display_ext_border(y_start)
     dis_value(y_start, int(TERM_COLS / 8),  eth(ccalc_reported.eth_hour),
