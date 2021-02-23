@@ -31,10 +31,10 @@ class Ethermine():
     min_payout = 0
     next_payout = None
     next_payout_txt = ''
-    gain_hour = 0.0
-    gain_day = 0.0
-    gain_week = 0.0
-    gain_month = 0.0
+    eth_hour = 0.0
+    eth_day = 0.0
+    eth_week = 0.0
+    eth_month = 0.0
     gain_progress = 0.0
 
     def __init__(self, eth_wallet):
@@ -188,10 +188,10 @@ class Ethermine():
         time_delta = datetime.now().astimezone() - self.payouts[0].paid_on
         time_delta_m = time_delta.days * 1440 + (time_delta.seconds / 60)
         gain_min = self.unpaid_balance / (time_delta_m)
-        self.gain_hour = round(gain_min * 60, 5)
-        self.gain_day = round(gain_min * 60 * 24, 5)
-        self.gain_week = round(gain_min * 60 * 24 * 7, 5)
-        self.gain_month = round(gain_min * 60 * 24 * 30, 5)
+        self.eth_hour = round(gain_min * 60, 5)
+        self.eth_day = round(gain_min * 60 * 24, 5)
+        self.eth_week = round(gain_min * 60 * 24 * 7, 5)
+        self.eth_month = round(gain_min * 60 * 24 * 30, 5)
         self.gain_progress = self.unpaid_balance / self.min_payout
 
     def update_next_payout(self, actual_gain_hour):

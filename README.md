@@ -23,7 +23,12 @@ Informations :
   - Progression for next payout
   - *Estimated income (based on 6h average real hashrate) and compared to :*
     - *Estimated income based on reported hashrate*
+    - *Estimated income based on average gain since last payout*
     - *Estimated income based on graphic card theorical hashrate (you have to set this in config file). The goal is to compare the income to a no optimized CG raw hashrate from Coincalculators result*
+    - Value color :
+      - Green if estimated income greater or equal to reported estimated income
+      - Yellow if estimated income greater or equal to theorical estimated income
+      - Else red
   - Reported hashrate, actual, historical data over 3 range, shares
   - Workers informations
 

@@ -41,6 +41,9 @@ HASH_CENT_5 = HASH_CENT_4 + 13
 HASH_CENT_6 = HASH_CENT_5 + 10
 HASH_CENT_7 = HASH_CENT_6 + 10
 HASH_CEP = [11, 11, 11, 16, 10, 10]
+PAYOUT_CEP = [12, 16, 17, 17]
+PAYOUT_CENT = [6, 14, 17, 17, 17]
+PAYOUT_HEAD = ['Ref', 'By hour', 'By day', 'By week', 'By month']
 ALERT_UPDATE_M = 15
 PERC_DELTA_YELLOW = 0.02
 PERC_DELTA_RED = 0.05
@@ -212,7 +215,7 @@ def report_color(actual, histo):
     return 1
 
 
-def display_hash_array_line_sep(y_start, top=False, end=False, gend=False):
+def display_array_line_sep(y_start, tab_ref, top=False, end=False, gend=False):
     if top:
         sep_char = '┬'
         sep_line = SIMPLE_SEP_ROW
@@ -227,9 +230,10 @@ def display_hash_array_line_sep(y_start, top=False, end=False, gend=False):
         sep_line = ARRAY_SEP_ROW
 
     display_separator(y_start, sep_line)
-    for index in range(len(HASH_CEP)):
-        x_index = HASH_CEP[index] if index == 0 \
-            else x_index + HASH_CEP[index]
+    x_index = 0
+    for index in range(len(tab_ref)):
+        x_index = tab_ref[index] if index == 0 \
+            else x_index + tab_ref[index]
         stdscr.addstr(y_start, x_index, sep_char)
 
     return y_start + 1
@@ -285,23 +289,23 @@ def display_hash_array_line(y_start, title, ref, histo_id=0, col_force=None):
 
 
 def display_hash_array(y_start, workers=False):
-    y_start = display_hash_array_line_sep(y_start, True)
+    y_start = display_array_line_sep(y_start, HASH_CEP, True)
     y_start = display_hash_array_headers(y_start)
-    y_start = display_hash_array_line_sep(y_start)
+    y_start = display_array_line_sep(y_start, HASH_CEP)
 
     if len(ethm.stats_histo) > 6:
         y_start = display_hash_array_line(y_start, 'Actual', ethm)
         y_start = display_hash_array_line(y_start, '30 min', ethm, 1, 5)
         y_start = display_hash_array_line(y_start, '60 min', ethm, 2, 5)
 
-    y_start = display_hash_array_line_sep(y_start, False, True)
+    y_start = display_array_line_sep(y_start, HASH_CEP, False, True)
     return y_start
 
 
 def display_workers(y_start):
-    y_start = display_hash_array_line_sep(y_start, True)
+    y_start = display_array_line_sep(y_start, HASH_CEP, True)
     y_start = display_hash_array_headers(y_start, True)
-    y_start = display_hash_array_line_sep(y_start, False)
+    y_start = display_array_line_sep(y_start, HASH_CEP, False)
 
     for worker in ethm.workers:
     	if len(worker.stats_histo) > 6:
@@ -309,7 +313,7 @@ def display_workers(y_start):
             y_start = display_hash_array_line(y_start, '30 min', worker, 1, 5)
             y_start = display_hash_array_line(y_start, '60 min', worker, 2, 5)
 
-    y_start = display_hash_array_line_sep(y_start, False, False, True)
+    y_start = display_array_line_sep(y_start, HASH_CEP, False, False, True)
     return y_start
 
 
@@ -323,6 +327,58 @@ def report_color_tresh(value, tresh1, tresh2):
         color = 1
     
     return color
+
+
+def display_payout_array_headers(y_start):
+    display_ext_border(y_start)
+    x_index = 0
+    for index in range(len(PAYOUT_HEAD)):
+        x_index = PAYOUT_CENT[index] if index == 0 \
+            else x_index + PAYOUT_CENT[index]
+        dis_value(y_start, x_index, PAYOUT_HEAD[index])
+
+    return y_start + 1
+
+
+def display_payout_array_line(y_start, title, actual_ref, col_force=None,
+                              reported_ref=None, theorical_ref=None):
+    color = [0] * 5
+    if col_force is None and reported_ref is not None \
+            and theorical_ref is not None:
+        color[1] = report_color_tresh(actual_ref.eth_hour,
+                                      reported_ref.eth_hour,
+                                      theorical_ref.eth_hour)
+        color[2] = report_color_tresh(actual_ref.eth_day,
+                                      reported_ref.eth_day,
+                                      theorical_ref.eth_day)
+        color[3] = report_color_tresh(actual_ref.eth_week,
+                                      reported_ref.eth_week,
+                                      theorical_ref.eth_week)
+        color[4] = report_color_tresh(actual_ref.eth_month,
+                                      reported_ref.eth_month,
+                                      theorical_ref.eth_month)
+
+    elif col_force is not None:
+        color = [col_force] * 5
+
+    eth_val = ['', actual_ref.eth_hour, actual_ref.eth_day,
+               actual_ref.eth_week, actual_ref.eth_month]
+    fiat_val = ['', to_cval(actual_ref.eth_hour), to_cval(actual_ref.eth_day),
+                to_cval(actual_ref.eth_week), to_cval(actual_ref.eth_month)]
+
+    display_ext_border(y_start)
+    x_index = 0
+    for index in range(len(PAYOUT_HEAD)):
+        if index == 0:
+            x_index = PAYOUT_CENT[index]
+            dis_value(y_start, x_index, '', title, color[index])
+        else:
+            x_index += PAYOUT_CENT[index]
+            dis_value(y_start, x_index, eth(eth_val[index]),
+                      fiat_val[index], color[index], '', color[index], '/')
+
+    return y_start + 1
+
 
 def display_payout(y_start):
     display_separator(y_start, SIMPLE_SEP_ROW)
@@ -361,76 +417,19 @@ def display_payout(y_start):
     dis_value(y_start, int(TERM_COLS / 2), progress_string)
 
     y_start += 1
-    display_separator(y_start, SIMPLE_SEP_ROW)
-    stdscr.addstr(y_start, int(TERM_COLS / 4), '┬')
-    stdscr.addstr(y_start, int(TERM_COLS / 2), '┬')
-    stdscr.addstr(y_start, int(TERM_COLS / 4 * 3), '┬')
-    y_start += 1
-    display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8), 'By hour')
-    dis_value(y_start, int(TERM_COLS / 8 * 3), 'By day')
-    dis_value(y_start, int(TERM_COLS / 8 * 5), 'By week')
-    dis_value(y_start, int(TERM_COLS / 8 * 7), 'By month')
-    y_start += 1
-    display_separator(y_start, ARRAY_SEP_ROW)
-    stdscr.addstr(y_start, int(TERM_COLS / 4), '┼')
-    stdscr.addstr(y_start, int(TERM_COLS / 2), '┼')
-    stdscr.addstr(y_start, int(TERM_COLS / 4 * 3), '┼')
-    y_start += 1
-    hour_col = report_color_tresh(ccalc_avg6.eth_hour,
-                                  ccalc_reported.eth_hour, ccalc_theorical.eth_hour)
-    day_col = report_color_tresh(ccalc_avg6.eth_day,
-                                 ccalc_reported.eth_day, ccalc_theorical.eth_day)
-    week_col = report_color_tresh(ccalc_avg6.eth_week,
-                                  ccalc_reported.eth_week, ccalc_theorical.eth_week)
-    month_col = report_color_tresh(ccalc_avg6.eth_month,
-                                   ccalc_reported.eth_month, ccalc_theorical.eth_month)
-    display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8), '',
-              eth(ccalc_avg6.eth_hour), hour_col, CRYPTO_S)
-    dis_value(y_start, int(TERM_COLS / 8 * 3), '',
-              eth(ccalc_avg6.eth_day), day_col, CRYPTO_S)
-    dis_value(y_start, int(TERM_COLS / 8 * 5), '',
-              eth(ccalc_avg6.eth_week), week_col, CRYPTO_S)
-    dis_value(y_start, int(TERM_COLS / 8 * 7), '',
-              eth(ccalc_avg6.eth_month), month_col, CRYPTO_S)
-    y_start += 1
-    display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8), '',
-              to_cval(ccalc_avg6.eth_hour), hour_col, fiat_s)
-    dis_value(y_start, int(TERM_COLS / 8 * 3), '',
-              to_cval(ccalc_avg6.eth_day), day_col, fiat_s)
-    dis_value(y_start, int(TERM_COLS / 8 * 5), '',
-              to_cval(ccalc_avg6.eth_week), week_col, fiat_s)
-    dis_value(y_start, int(TERM_COLS / 8 * 7), '',
-              to_cval(ccalc_avg6.eth_month), month_col, fiat_s)
-    y_start += 1
-    display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8),  eth(ccalc_reported.eth_hour),
-              to_cval(ccalc_reported.eth_hour), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 3), eth(ccalc_reported.eth_day),
-              to_cval(ccalc_reported.eth_day), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 5), eth(ccalc_reported.eth_week),
-              to_cval(ccalc_reported.eth_week), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 7), eth(ccalc_reported.eth_month),
-              to_cval(ccalc_reported.eth_month), 5, '', 5, '/', 5)
-    y_start += 1
-    display_ext_border(y_start)
-    dis_value(y_start, int(TERM_COLS / 8),  eth(ccalc_theorical.eth_hour),
-              to_cval(ccalc_theorical.eth_hour), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 3), eth(ccalc_theorical.eth_day),
-              to_cval(ccalc_theorical.eth_day), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 5), eth(ccalc_theorical.eth_week),
-              to_cval(ccalc_theorical.eth_week), 5, '', 5, '/', 5)
-    dis_value(y_start, int(TERM_COLS / 8 * 7), eth(ccalc_theorical.eth_month),
-              to_cval(ccalc_theorical.eth_month), 5, '', 5, '/', 5)
-    y_start += 1
-    display_separator(y_start, SIMPLE_SEP_ROW)
-    stdscr.addstr(y_start, int(TERM_COLS / 4), '┴')
-    stdscr.addstr(y_start, int(TERM_COLS / 2), '┴')
-    stdscr.addstr(y_start, int(TERM_COLS / 4 * 3), '┴')
+    y_start = display_array_line_sep(y_start, PAYOUT_CEP, True)
+    y_start = display_payout_array_headers(y_start)
+    y_start = display_array_line_sep(y_start, PAYOUT_CEP)
 
-    return y_start + 1
+    y_start = display_payout_array_line(y_start, 'Avg. 6h', ccalc_avg6, None,
+                                        ccalc_reported, ccalc_theorical)
+    y_start = display_payout_array_line(y_start, 'Reports', ccalc_reported, 5)
+    y_start = display_payout_array_line(y_start, 'F. last', ethm, 5)
+    y_start = display_payout_array_line(y_start, 'Theoric', ccalc_theorical, 5)
+
+    y_start = display_array_line_sep(y_start, PAYOUT_CEP, False, True)
+
+    return y_start
 
 
 def display_ethermine_pool(y_start):
