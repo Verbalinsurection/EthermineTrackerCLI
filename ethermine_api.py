@@ -8,6 +8,10 @@ import requests
 
 from ethpay import EthPay
 
+DATE_FORMAT = '%Y-%m-%d %H:%M'
+MINER_TAG = ':miner'
+WORKER_TAG = ':worker'
+
 
 class Ethermine():
     ETHM_API_BASE = 'https://api.ethermine.org'
@@ -89,7 +93,7 @@ class Ethermine():
 
     def __update_miner_dash(self):
         """Update Ethermine miner dashboard."""
-        cust_url = self.ETHM_API_MINERDASH.replace(':miner', self.__wallet)
+        cust_url = self.ETHM_API_MINERDASH.replace(MINER_TAG, self.__wallet)
         dash_json = self.api_request(cust_url)
         if dash_json is not None:
             try:
@@ -101,7 +105,7 @@ class Ethermine():
                 cstat_json = data_json['currentStatistics']
                 self.stat_time = datetime.fromtimestamp(
                     cstat_json['time']).astimezone()
-                self.stat_time_txt = self.stat_time.strftime('%Y-%m-%d %H:%M')
+                self.stat_time_txt = self.stat_time.strftime(DATE_FORMAT)
                 self.reported_hrate = self.__hrate_mh(
                     cstat_json['reportedHashrate'])
                 self.current_hrate = self.__hrate_mh(
@@ -124,66 +128,28 @@ class Ethermine():
             except KeyError as e:
                 print(e)
 
+    def __sub_avg(self, h_range, max_index):
+        all_hrate = 0
+        for index in range(h_range):
+            all_hrate += self.stats_histo[max_index - index].current_hrate
+        return round(all_hrate / h_range, 0)
+
     def calc_avg(self):
-        entry_num = len(self.stats_histo)
+        nb_entry = len(self.stats_histo)
         max_index = self.max_index
 
-        # calc avg from -24h to now
-        all_hrate = 0
-        for stat_histo in self.stats_histo:
-            all_hrate += stat_histo.current_hrate
-        self.avg_hrate_24[0] = round(all_hrate / entry_num, 0)
-
-        # calc avg from -1h to now
-        all_hrate = 0
-        for index in range(6):
-            all_hrate += self.stats_histo[max_index - index].current_hrate
-        self.avg_hrate_1[0] = round(all_hrate / 6, 0)
-
-        # calc avg from -6h to now
-        all_hrate = 0
-        for index in range(36):
-            all_hrate += self.stats_histo[max_index - index].current_hrate
-        self.avg_hrate_6[0] = round(all_hrate / 36, 0)
-
-        # calc avg from -24h to -30m
-        all_hrate = 0
-        for index in range(entry_num - 3):
-            all_hrate += self.stats_histo[index].current_hrate
-        self.avg_hrate_24[1] = round(all_hrate / (entry_num - 3), 0)
-
-        # calc avg from -1h30 to -30m
-        all_hrate = 0
-        for index in range(6):
-            all_hrate += self.stats_histo[max_index - 3 - index].current_hrate
-        self.avg_hrate_1[1] = round(all_hrate / 6, 0)
-
-        # calc avg from -6h30 to -30m
-        all_hrate = 0
-        for index in range(36):
-            all_hrate += self.stats_histo[max_index - 3 - index].current_hrate
-        self.avg_hrate_6[1] = round(all_hrate / 36, 0)
-
-        # calc avg from -24h to -60m
-        all_hrate = 0
-        for index in range(entry_num - 6):
-            all_hrate += self.stats_histo[index].current_hrate
-        self.avg_hrate_24[2] = round(all_hrate / (entry_num - 6), 0)
-
-        # calc avg from -2h to -1h
-        all_hrate = 0
-        for index in range(6):
-            all_hrate += self.stats_histo[max_index - 6 - index].current_hrate
-        self.avg_hrate_1[2] = round(all_hrate / 6, 0)
-
-        # calc avg from -7h to -1h
-        all_hrate = 0
-        for index in range(36):
-            all_hrate += self.stats_histo[max_index - 6 - index].current_hrate
-        self.avg_hrate_6[2] = round(all_hrate / 36, 0)
+        self.avg_hrate_1[0] = self.__sub_avg(6, max_index)
+        self.avg_hrate_1[1] = self.__sub_avg(6, max_index - 3)
+        self.avg_hrate_1[2] = self.__sub_avg(6, max_index - 6)
+        self.avg_hrate_6[0] = self.__sub_avg(36, max_index)
+        self.avg_hrate_6[1] = self.__sub_avg(36, max_index - 3)
+        self.avg_hrate_6[2] = self.__sub_avg(36, max_index - 6)
+        self.avg_hrate_24[0] = self.__sub_avg(nb_entry, max_index)
+        self.avg_hrate_24[1] = self.__sub_avg(nb_entry - 3, max_index - 3)
+        self.avg_hrate_24[2] = self.__sub_avg(nb_entry - 6, max_index - 6)
 
     def __update_miner_payouts(self):
-        cust_url = self.ETHM_API_MINERPAYOUT.replace(':miner', self.__wallet)
+        cust_url = self.ETHM_API_MINERPAYOUT.replace(MINER_TAG, self.__wallet)
         payouts_json = self.api_request(cust_url)
         if payouts_json is not None:
             self.payouts.clear()
@@ -200,7 +166,7 @@ class Ethermine():
         self.gain_progress = self.unpaid_balance / self.min_payout
 
     def __update_stats_coin(self):
-        cust_url = self.ETHM_API_MINERSTAT.replace(':miner', self.__wallet)
+        cust_url = self.ETHM_API_MINERSTAT.replace(MINER_TAG, self.__wallet)
         stats_json = self.api_request(cust_url)
         if stats_json is not None:
             coins_pmin = stats_json['data']['coinsPerMin']
@@ -215,7 +181,7 @@ class Ethermine():
         self.next_payout = \
             datetime.now().astimezone() + \
             timedelta(minutes=minutes_to_tresh)
-        self.next_payout_txt = self.next_payout.strftime('%Y-%m-%d %H:%M')
+        self.next_payout_txt = self.next_payout.strftime(DATE_FORMAT)
 
 
 class EthermineH():
@@ -230,7 +196,7 @@ class EthermineH():
     def __init__(self, json_data):
         self.stat_time = datetime.fromtimestamp(
             json_data['time']).astimezone()
-        self.stat_time_txt = self.stat_time.strftime('%Y-%m-%d %H:%M')
+        self.stat_time_txt = self.stat_time.strftime(DATE_FORMAT)
         self.reported_hrate = self.__hrate_mh(
             json_data['reportedHashrate'])
         self.current_hrate = self.__hrate_mh(
@@ -262,8 +228,8 @@ class Worker(Ethermine):
         self.__process_histo()
 
     def __process_histo(self):
-        cust_url = Ethermine.ETHM_API_WORKER.replace(':miner', self.__wallet)
-        cust_url = cust_url.replace(':worker', self.name)
+        cust_url = Ethermine.ETHM_API_WORKER.replace(MINER_TAG, self.__wallet)
+        cust_url = cust_url.replace(WORKER_TAG, self.name)
         dash_json = self.api_request(cust_url)
         if dash_json is not None:
             try:
@@ -288,5 +254,5 @@ class Payout():
     def __init__(self, json_data):
         self.paid_on = datetime.fromtimestamp(
             json_data['paidOn']).astimezone()
-        self.paid_on_txt = self.paid_on.strftime('%Y-%m-%d %H:%M')
+        self.paid_on_txt = self.paid_on.strftime(DATE_FORMAT)
         self.amount = json_data['amount']
