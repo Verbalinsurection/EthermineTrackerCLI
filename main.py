@@ -9,10 +9,7 @@ import configparser
 import curses
 import sys
 from datetime import datetime
-from threading import Thread
 from time import sleep
-
-import schedule
 
 from coin_market import Coin
 from coincalculators import CoinCalculators
@@ -83,7 +80,6 @@ if not all(v is not None for v in
     exit(1)
 
 
-updating = False
 ethm = Ethermine(wallet)
 coin = Coin(fiat_name, 'ethereum')
 ethw = EtherWallet(etherscan_api_key, wallet)
@@ -92,23 +88,12 @@ ccalc_theorical = CoinCalculators('ethereum')
 
 
 def update_data():
-    global updating
-    updating = True
     ethm.update()
     coin.update()
     ethw.update()
     ccalc_reported.update(ethm.reported_hrate)
     ccalc_theorical.update(theorical_hrate)
     ethm.update_next_payout(ethm.eth_pay_stats.eth_hour)
-    sleep(1)
-    updating = False
-
-
-def thread_updater():
-    schedule.every(api_update_sec).seconds.do(update_data)
-    while True:
-        schedule.run_pending()
-        sleep(1)
 
 
 def display_ext_border(y_start):
@@ -470,9 +455,6 @@ def display_header(y_start):
 if __name__ == "__main__":
     update_data()
 
-    update_thread = Thread(target=thread_updater, daemon=True)
-    update_thread.start()
-
     stdscr = curses.initscr()
     stdscr.nodelay(1)
     curses.noecho()
@@ -486,27 +468,33 @@ if __name__ == "__main__":
     curses.init_pair(5, 244, curses.COLOR_BLACK)  # Grey medium
     curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Header
 
+    loop_index = 0
     while True:
-        if not updating:
-            stdscr.clear()
-            y_start = 0
-            display_separator(y_start, TOP_ROW)
+        if loop_index == api_update_sec:
+            update_data()
+            loop_index = 0
+        else:
+            loop_index += 1
 
-            y_start += 1
-            y_start = display_header(y_start)
-            display_separator(y_start)
+        stdscr.clear()
+        y_start = 0
+        display_separator(y_start, TOP_ROW)
 
-            y_start += 1
-            y_start = display_ethereum_infos(y_start)
-            display_separator(y_start)
+        y_start += 1
+        y_start = display_header(y_start)
+        display_separator(y_start)
 
-            y_start += 1
-            y_start = display_ethermine_pool(y_start)
+        y_start += 1
+        y_start = display_ethereum_infos(y_start)
+        display_separator(y_start)
 
-            y_start -= 1
-            y_start = display_workers(y_start)
+        y_start += 1
+        y_start = display_ethermine_pool(y_start)
 
-            stdscr.refresh()
+        y_start -= 1
+        y_start = display_workers(y_start)
+
+        stdscr.refresh()
 
         key = stdscr.getch()
         if key == ord('q'):

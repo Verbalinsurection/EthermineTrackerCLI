@@ -40,7 +40,6 @@ Write using Python 3.8, have to check with other version.
 
 ### Dependency
 
-- [schedule==1.0.0](https://pypi.org/project/schedule/)
 - *Windows users* - [windows-curses==2.2.0](https://pypi.org/project/windows-curses/)
 
 ## Configuration
