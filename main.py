@@ -209,7 +209,7 @@ def report_color(actual, histo):
     cap_histo_red = histo * (1 - PERC_DELTA_RED)
     if actual >= cap_histo_yellow:
         return 3
-    elif actual > cap_histo_red:
+    if actual > cap_histo_red:
         return 4
     return 1
 
@@ -318,9 +318,9 @@ def display_workers(y_start):
 
 def report_color_tresh(value, tresh1, tresh2):
     color = 0
-    if value >= tresh1:
+    if value >= tresh1 * (1 - PERC_DELTA_YELLOW):
         color = 3
-    elif value >= tresh2:
+    elif value >= tresh2 * (1 - PERC_DELTA_RED):
         color = 4
     else:
         color = 1
@@ -514,7 +514,5 @@ if __name__ == "__main__":
         elif key < 0:
             sleep(1)
 
-    # curses.echo()
-    # curses.nocbreak()
     curses.endwin()
     sys.exit(0)
