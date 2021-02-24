@@ -452,7 +452,31 @@ def display_header(y_start):
     return y_start + 1
 
 
+def update_screen():
+    stdscr.clear()
+    y_start = 0
+    display_separator(y_start, TOP_ROW)
+
+    y_start += 1
+    y_start = display_header(y_start)
+    display_separator(y_start)
+
+    y_start += 1
+    y_start = display_ethereum_infos(y_start)
+    display_separator(y_start)
+
+    y_start += 1
+    y_start = display_ethermine_pool(y_start)
+
+    y_start -= 1
+    y_start = display_workers(y_start)
+
+    stdscr.move(y_start, 0)
+    stdscr.refresh()
+
+
 if __name__ == "__main__":
+    print('Fetching data...')
     update_data()
 
     stdscr = curses.initscr()
@@ -466,34 +490,23 @@ if __name__ == "__main__":
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(5, 244, curses.COLOR_BLACK)  # Grey medium
-    curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Header
 
+    update_screen()
     loop_index = 0
     while True:
         if loop_index == api_update_sec:
+            stdscr.addstr(1, TERM_COLS - 12, 'Updating...',
+                          curses.color_pair(5))
+            stdscr.refresh()
             update_data()
             loop_index = 0
+            update_screen()
         else:
             loop_index += 1
 
-        stdscr.clear()
-        y_start = 0
-        display_separator(y_start, TOP_ROW)
-
-        y_start += 1
-        y_start = display_header(y_start)
-        display_separator(y_start)
-
-        y_start += 1
-        y_start = display_ethereum_infos(y_start)
-        display_separator(y_start)
-
-        y_start += 1
-        y_start = display_ethermine_pool(y_start)
-
-        y_start -= 1
-        y_start = display_workers(y_start)
-
+        countdown = str(api_update_sec - loop_index).rjust(11, ' ')
+        stdscr.addstr(1, TERM_COLS - len(countdown) - 1,
+                      countdown, curses.color_pair(5))
         stdscr.refresh()
 
         key = stdscr.getch()
