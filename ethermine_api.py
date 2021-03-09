@@ -41,6 +41,7 @@ class Ethermine():
     eth_pay_stats = None
     eth_pay_from_last = None
     gain_progress = 0.0
+    last_error = None
 
     def __init__(self, eth_wallet):
         """Init of Ethermine class."""
@@ -71,16 +72,16 @@ class Ethermine():
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as errh:
-            print(errh)
+            self.last_error = errh
             return None
         except requests.exceptions.ConnectionError as errc:
-            print(errc)
+            self.last_error = errc
             return None
         except requests.exceptions.Timeout as errt:
-            print(errt)
+            self.last_error = errt
             return None
         except requests.exceptions.RequestException as err:
-            print(err)
+            self.last_error = err
             return None
 
     def __update_pool(self):

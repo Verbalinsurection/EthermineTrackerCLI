@@ -14,6 +14,7 @@ class CoinCalculators():
     __crypto = None
 
     eth_pay = None
+    last_error = None
 
     def __init__(self, crypto):
         """Init of CoinCalculators class."""
@@ -27,16 +28,16 @@ class CoinCalculators():
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as errh:
-            print(errh)
+            self.last_error = errh
             return None
         except requests.exceptions.ConnectionError as errc:
-            print(errc)
+            self.last_error = errc
             return None
         except requests.exceptions.Timeout as errt:
-            print(errt)
+            self.last_error = errt
             return None
         except requests.exceptions.RequestException as err:
-            print(err)
+            self.last_error = err
             return None
 
     def update(self, hrate):
