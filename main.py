@@ -11,10 +11,7 @@ import sys
 from datetime import datetime
 from time import sleep
 
-from modules.coin_market import Coin
-from modules.coincalculators import CoinCalculators
-from modules.ethermine_api import Ethermine
-from modules.etherscan import EtherWallet
+import EthMiningFetcher as EMF
 
 TERM_COLS = 80
 TERM_CENT = TERM_COLS // 2
@@ -80,11 +77,11 @@ if not all(v is not None for v in
     exit(1)
 
 
-ethm = Ethermine(wallet)
-coin = Coin(fiat_name, 'ethereum')
-ethw = EtherWallet(etherscan_api_key, wallet)
-ccalc_reported = CoinCalculators('ethereum')
-ccalc_theorical = CoinCalculators('ethereum')
+ethm = EMF.Ethermine(wallet)
+coin = EMF.Coin(fiat_name, 'ethereum')
+ethw = EMF.EtherWallet(etherscan_api_key, wallet)
+ccalc_reported = EMF.CoinCalculators('ethereum')
+ccalc_theorical = EMF.CoinCalculators('ethereum')
 
 
 def update_data():

@@ -3,7 +3,17 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli/badge)](https://www.codefactor.io/repository/github/verbalinsurection/etherminetrackercli)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Verbalinsurection_EthermineTrackerCLI&metric=alert_status)](https://sonarcloud.io/dashboard?id=Verbalinsurection_EthermineTrackerCLI)
 
-> :warning: **Work in progress** :warning: : Code work but need a lot of optimizations. **Feel free to participate !**
+:warning: **Work in progress** :warning: : Code work but need a lot of optimizations. **Feel free to participate !**
+
+:warning: **Clone with submodule** :warning: To clone repo with submodules :
+
+```bash
+git clone https://github.com/.....
+git submodule init
+git submodule update
+```
+
+:construction: Python package setup is on the way ;) :construction:
 
 ## Introduction
 
