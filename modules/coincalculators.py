@@ -4,7 +4,7 @@
 
 import requests
 
-from ethpay import EthPay
+from .ethpay import EthPay
 
 
 class CoinCalculators():

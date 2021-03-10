@@ -11,10 +11,10 @@ import sys
 from datetime import datetime
 from time import sleep
 
-from coin_market import Coin
-from coincalculators import CoinCalculators
-from ethermine_api import Ethermine
-from etherscan import EtherWallet
+from modules.coin_market import Coin
+from modules.coincalculators import CoinCalculators
+from modules.ethermine_api import Ethermine
+from modules.etherscan import EtherWallet
 
 TERM_COLS = 80
 TERM_CENT = TERM_COLS // 2

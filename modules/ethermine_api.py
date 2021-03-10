@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 import requests
 
-from ethpay import EthPay
+from .ethpay import EthPay
 
 DATE_FORMAT = '%Y-%m-%d %H:%M'
 MINER_TAG = ':miner'
